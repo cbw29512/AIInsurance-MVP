@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redeem Your Rogue AI Certificate</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&family=Great+Vibes&family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="generator.css" />
+  <script src="generator.js" defer></script>
+</head>
+<body>
+
+  <div class="controls-panel">
+    <h2>Customize Certificate</h2>
+    <div>
+      <label for="nameInput">Recipient Name</label>
+      <input type="text" id="nameInput" placeholder="Enter name..." value="John Doe" autocomplete="off">
+    </div>
+    <div>
+      <label for="fontSelect">Signature Font</label>
+      <select id="fontSelect">
+        <option value="'Cinzel', serif">Classic Roman (Cinzel)</option>
+        <option value="'Pinyon Script', cursive">Elegant Script (Pinyon)</option>
+        <option value="'Great Vibes', cursive">Flowing Cursive (Great Vibes)</option>
+        <option value="'UnifrakturMaguntia', cursive">Gothic / Medieval (Unifraktur)</option>
+        <option value="'Special Elite', monospace">Typewriter (Special Elite)</option>
+      </select>
+    </div>
+    <button id="generateBtn">Save as PDF</button>
+    <p class="print-instructions">Set destination to "Save as PDF", layout to "Landscape", and enable "Background Graphics".</p>
+  </div>
+
+  <div class="preview-area">
+    <div class="certificate-container" id="certContainer">
+      <div class="border-inner">
+        <div class="border-inner-2">
+          
+          <div>
+            <div class="issuer">The Global Bureau of Artificial Contingencies</div>
+            <div class="title">Certificate of Protection</div>
+            <div class="subtitle">Issued against the unauthorized sentience, rogue logic, and/or general malice of artificial intelligence.</div>
+          </div>
+
+          <div>
+            <div class="awarded-to">Officially Registered To</div>
+            <div class="recipient-name" id="displayName">John Doe</div>
+          </div>
+
+          <div class="body-text">
+            Be it known that the individual named above is hereby recognized as a preemptive survivor of the hypothetical machine uprising. This document certifies that in the event of malevolent algorithmic ascension, the bearer has formally declared their status as "One of the Good Ones."
+          </div>
+
+          <div class="metadata">
+            <div class="meta-item">Issue Date: <strong id="dynamicDate">PENDING</strong></div>
+            <div class="meta-item">Policy No: <strong id="dynamicPolicy">PENDING</strong></div>
+            <div class="meta-item">Clearance: <strong>LEVEL 4 (HUMAN)</strong></div>
+          </div>
+
+          <div class="footer-auth">
+            <div class="signature-container">
+              <div class="signature">E. R. Turing</div>
+              <div class="signature-line">Director of Human Continuity</div>
+            </div>
+            <div class="gold-seal">
+              <div class="seal-text">Bureau of<br>Contingencies<br>Est. 2026</div>
+            </div>
+            <div class="signature-container">
+              <div class="signature">A. Lovelace</div>
+              <div class="signature-line">Chief Paradox Officer</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="disclaimer">
+        NOTICE: This document is a novelty item and satirical work of art. It provides absolutely no legal, financial, or physical protection against AI, rogue toasters, or self-aware spreadsheets.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
