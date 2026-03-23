@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/standard", "destination": "/standard/index.html" },
+    { "source": "/premium",  "destination": "/premium/index.html"  }
+  ]
+}

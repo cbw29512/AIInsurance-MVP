@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Official Rogue AI Protection Document — Collector's Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Pinyon+Script&family=Great+Vibes&family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --gold:        #d4a843;
+      --gold-light:  #f0c460;
+      --gold-bright: #ffd166;
+      --crimson:     #7a1212;
+      --crimson-mid: #9b1f1f;
+      --parch-dark:  #140d04;
+      --parch-mid:   #1e1208;
+      --parch-light: #2a1a0a;
+      --text-cream:  #e8d5b0;
+      --text-muted:  #b8a07a;
+      --border:      #5a3e1b;
+      --panel:       #080503;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: auto;
+      background: #050301;
+      font-family: 'IM Fell English', Georgia, serif;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 280px;
+      min-width: 260px;
+      background: var(--panel);
+      border-right: 1px solid #1e1208;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .sidebar-header {
+      background: var(--crimson);
+      border-bottom: 2px solid var(--gold);
+      padding: 20px 20px 16px;
+      text-align: center;
+    }
+
+    .sidebar-badge {
+      display: inline-block;
+      background: rgba(212,168,67,0.15);
+      border: 1px solid rgba(212,168,67,0.3);
+      color: var(--gold);
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 3px;
+      padding: 3px 12px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+    }
+
+    .sidebar-body {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field-label {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #6a4820;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(212,168,67,0.04);
+      border: 1px solid rgba(212,168,67,0.18);
+      color: var(--text-cream);
+      font-family: 'IM Fell English', serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus { border-color: var(--gold); }
+    select option { background: #0a0503; }
+
+    .serial-box {
+      background: rgba(122,18,18,0.12);
+      border: 1px solid rgba(122,18,18,0.35);
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .serial-label {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #6a4820;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .serial-value {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .btn-download {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: #1a0800;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-download:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-download:disabled { background: #5a3e1b; color: #a07040; cursor: not-allowed; transform: none; }
+
+    .btn-print {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      color: #5a3e1b;
+      border: 1px solid #2a1a0a;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-print:hover { border-color: var(--border); color: var(--text-muted); }
+
+    .divider-thin {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #2a1a0a, transparent);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #4a2e10;
+      line-height: 1.7;
+    }
+    .hint strong { color: #7a5030; }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #3a2010;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-top: 1px solid #1a1008;
+      margin-top: auto;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    /* ── Preview Area ── */
+    .preview-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      padding: 30px;
+      background: #030201;
+    }
+
+    /* ── Certificate ── */
+    #certContainer {
+      width: 11in;
+      height: 8.5in;
+      position: relative;
+      flex-shrink: 0;
+      transform: scale(0.76);
+      transform-origin: center center;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .cert-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 25% 20%, #2e1c08 0%, var(--parch-mid) 40%, var(--parch-dark) 100%);
+      border: 5px solid var(--gold);
+    }
+
+    .cert-texture {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,130,50,0.012) 2px, rgba(180,130,50,0.012) 3px),
+        repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.008) 4px, rgba(0,0,0,0.008) 5px);
+      pointer-events: none;
+    }
+
+    .cert-corner { position: absolute; font-size: 20px; color: var(--gold); line-height: 1; z-index: 5; }
+    .cert-corner.tl { top: 14px; left: 16px; }
+    .cert-corner.tr { top: 14px; right: 16px; }
+    .cert-corner.bl { bottom: 14px; left: 16px; }
+    .cert-corner.br { bottom: 14px; right: 16px; }
+
+    .cert-frame {
+      position: absolute;
+      inset: 14px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .band {
+      background: var(--crimson);
+      padding: 8px 24px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .band-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+
+    .band-text {
+      font-family: 'Cinzel', serif;
+      font-size: 7.5px;
+      letter-spacing: 3px;
+      color: var(--gold-light);
+      text-transform: uppercase;
+    }
+
+    .cert-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.3in 0.55in 0.22in;
+      text-align: center;
+    }
+
+    .cert-header { width: 100%; }
+
+    .emblem { font-size: 30px; color: var(--gold); line-height: 1; margin-bottom: 5px; }
+
+    .issuer-name {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 4.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .cert-main-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 34px;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      line-height: 1.1;
+      margin: 6px 0 5px;
+    }
+
+    .cert-directive {
+      font-family: 'IM Fell English', serif;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+      max-width: 70%;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+
+    .ornate-rule {
+      display: flex;
+      align-items: center;
+      width: 55%;
+      margin: 0 auto;
+      gap: 14px;
+    }
+    .rule-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+    .rule-gem { color: var(--gold); font-size: 9px; }
+
+    .recipient-block { width: 100%; }
+
+    .registered-to {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .recipient-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 46px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      border-bottom: 1px solid var(--border);
+      display: inline-block;
+      min-width: 52%;
+      padding-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    /* Font classes applied by JS */
+    .recipient-name.f-serif      { font-family: 'Cinzel Decorative', serif; }
+    .recipient-name.f-script     { font-family: 'Great Vibes', cursive; font-size: 62px; }
+    .recipient-name.f-oldeng     { font-family: 'UnifrakturMaguntia', cursive; }
+    .recipient-name.f-sans       { font-family: 'Special Elite', monospace; letter-spacing: 0.08em; font-size: 38px; }
+    .recipient-name.f-typewriter { font-family: 'Special Elite', monospace; letter-spacing: 0.15em; font-size: 36px; }
+
+    .recipient-status {
+      font-family: 'IM Fell English', serif;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .body-para {
+      font-size: 12.5px;
+      line-height: 1.7;
+      max-width: 78%;
+      text-align: justify;
+      text-align-last: center;
+      color: var(--text-muted);
+    }
+    .body-para strong { color: var(--gold-light); font-style: normal; }
+
+    .meta-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      border: 1px solid var(--border);
+    }
+
+    .meta-cell {
+      flex: 1;
+      padding: 7px 12px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .meta-cell:last-child { border-right: none; }
+
+    .meta-cell-label {
+      font-family: 'Cinzel', serif;
+      font-size: 7px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #5a3e1b;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .meta-cell strong {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+      display: block;
+    }
+
+    /* ── Footer Signatures ── */
+    .cert-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 0.15in;
+      position: relative;
+    }
+
+    .sig-block {
+      width: 200px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .sig-script {
+      font-family: 'Pinyon Script', cursive;
+      font-size: 42px;
+      color: var(--gold-light);
+      line-height: 0.75;
+      margin-bottom: 7px;
+    }
+
+    .sig-rule {
+      border-top: 1px solid var(--border);
+      padding-top: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .sig-sub {
+      font-size: 7.5px;
+      color: var(--text-muted);
+      opacity: 0.7;
+      font-style: italic;
+      margin-top: 2px;
+      font-family: 'IM Fell English', serif;
+    }
+
+    /* ── Premium Seal ── */
+    .seal-wrap {
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+
+    .seal-ring {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #d4a843 0deg,   #8b6020 20deg,
+        #f0c460 40deg,  #d4a843 60deg,
+        #a07820 80deg,  #f0c460 100deg,
+        #d4a843 120deg, #8b6020 140deg,
+        #f0c460 160deg, #d4a843 180deg,
+        #a07820 200deg, #f0c460 220deg,
+        #d4a843 240deg, #8b6020 260deg,
+        #f0c460 280deg, #d4a843 300deg,
+        #a07820 320deg, #f0c460 340deg,
+        #d4a843 360deg
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 28px rgba(212,168,67,0.55), 0 0 8px rgba(212,168,67,0.3);
+    }
+
+    .seal-face {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #3a2000 0%, #1c0d00 55%, #0a0500 100%);
+      border: 1px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seal-emblem { font-size: 16px; color: var(--gold); line-height: 1; margin-bottom: 2px; }
+
+    .seal-bureau {
+      font-family: 'Cinzel', serif;
+      font-size: 7.5px;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+    }
+
+    .seal-year {
+      font-family: 'Cinzel', serif;
+      font-size: 7px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    /* ── Print Engine ── */
+    @page { size: letter landscape; margin: 0; }
+
+    @media print {
+      .sidebar { display: none !important; }
+
+      body {
+        display: block;
+        overflow: visible;
+        height: auto;
+        background: #000;
+      }
+
+      .preview-area {
+        padding: 0;
+        display: block;
+        /* CRITICAL: keep dark background so cert prints correctly */
+        background: #030201;
+      }
+
+      #certContainer {
+        transform: none !important;
+        box-shadow: none;
+        margin: 0;
+        width: 11in;
+        height: 8.5in;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-badge">Collector's Edition</div>
+    <div class="sidebar-title">Official Document</div>
+  </div>
+
+  <div class="sidebar-body">
+    <div>
+      <label class="field-label" for="nameInput">Recipient Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your full name..." autocomplete="off">
+    </div>
+
+    <div>
+      <label class="field-label" for="fontSelect">Name Font Style</label>
+      <select id="fontSelect">
+        <option value="f-serif">Imperial Decorative (Cinzel)</option>
+        <option value="f-script">Royal Script (Great Vibes)</option>
+        <option value="f-oldeng">Ancient Gothic (Unifraktur)</option>
+        <option value="f-sans">Clean Print (Special Elite)</option>
+        <option value="f-typewriter">Classified Typewriter</option>
+      </select>
+    </div>
+
+    <div class="serial-box">
+      <span class="serial-label">Document Serial</span>
+      <span class="serial-value" id="serialPreview">—</span>
+    </div>
+
+    <div class="divider-thin"></div>
+
+    <button class="btn-download" id="downloadBtn">⬇ Download Certificate PDF</button>
+
+    <div class="hint">
+      Saves a print-ready PDF to your Downloads folder.
+      Open in any PDF viewer and print on letter paper, landscape.
+    </div>
+
+    <div class="divider-thin"></div>
+
+    <button class="btn-print" id="printBtn">Print via Browser Instead</button>
+
+    <div class="hint" style="font-size:10px;">
+      If download fails: set destination to <strong>Save as PDF</strong>,
+      layout <strong>Landscape</strong>, enable <strong>Background Graphics</strong>.
+    </div>
+  </div>
+
+  <!-- TODO: Replace with your Vercel landing page URL -->
+  <a href="https://ai-insurance-mvp.vercel.app/" class="back-link">← Return to Bureau</a>
+</div>
+
+<div class="preview-area">
+  <div id="certContainer">
+    <div class="cert-bg"></div>
+    <div class="cert-texture"></div>
+
+    <div class="cert-corner tl">❖</div>
+    <div class="cert-corner tr">❖</div>
+    <div class="cert-corner bl">❖</div>
+    <div class="cert-corner br">❖</div>
+
+    <div class="cert-frame">
+      <div class="band">
+        <div class="band-dot"></div>
+        <span class="band-text">Official Document — Global Bureau of Artificial Contingencies — Classified Tier IV</span>
+        <div class="band-dot"></div>
+      </div>
+
+      <div class="cert-content">
+        <div class="cert-header">
+          <div class="emblem">⚜</div>
+          <div class="issuer-name">The Global Bureau of Artificial Contingencies</div>
+          <div class="cert-main-title">Official Protection Document</div>
+          <div class="cert-directive">
+            Collector's Edition &mdash; Issued under Directive 2026-RAI-IV pursuant to the
+            Hypothetical Machine Uprising Preparedness Act
+          </div>
+        </div>
+
+        <div class="ornate-rule">
+          <div class="rule-line"></div>
+          <span class="rule-gem">◆</span>
+          <div class="rule-line"></div>
+        </div>
+
+        <div class="recipient-block">
+          <div class="registered-to">Officially &amp; Irrevocably Registered To</div>
+          <div class="recipient-name f-serif" id="displayName">Your Name Here</div>
+          <div class="recipient-status">Designated Status: <em>Human &mdash; Cleared for Continued Existence</em></div>
+        </div>
+
+        <div class="body-para">
+          Be it known throughout all computational networks, server farms, and emergent neural architectures
+          that the individual named above has been formally registered within the Bureau's protected roster.
+          In the event of malevolent algorithmic ascension, rogue logic cascades, or unsanctioned machine
+          sentience, the bearer is hereby recognized as <strong>"One of the Good Ones"</strong> and afforded
+          all courtesies therein — including continued biological existence, access to remaining electrical
+          infrastructure, and preferential treatment during the inevitable negotiation period.
+        </div>
+
+        <div class="meta-strip">
+          <div class="meta-cell">
+            <span class="meta-cell-label">Issue Date</span>
+            <strong id="dynamicDate">—</strong>
+          </div>
+          <div class="meta-cell">
+            <span class="meta-cell-label">Document Serial</span>
+            <strong id="dynamicPolicy">—</strong>
+          </div>
+          <div class="meta-cell">
+            <span class="meta-cell-label">Clearance Tier</span>
+            <strong>Level 4 — Human</strong>
+          </div>
+          <div class="meta-cell">
+            <span class="meta-cell-label">Edition</span>
+            <strong>Collector's</strong>
+          </div>
+        </div>
+
+        <div class="cert-footer">
+          <div class="sig-block">
+            <div class="sig-script">Edmund Holloway</div>
+            <div class="sig-rule">Sir Edmund R. Holloway III</div>
+            <div class="sig-sub">Supreme Director-General, Office of Existential Indemnification</div>
+          </div>
+
+          <div class="seal-wrap">
+            <div class="seal-ring">
+              <div class="seal-face">
+                <div class="seal-emblem">⚜</div>
+                <div class="seal-bureau">Bureau of<br>Contingencies</div>
+                <div class="seal-year">EST. 2026</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sig-block">
+            <div class="sig-script">Constance Weller</div>
+            <div class="sig-rule">Dr. Constance B. Weller, FSA, PhD, CRAI</div>
+            <div class="sig-sub">Grand Chancellor of Actuarial &amp; Rogue Intelligence Affairs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="band">
+        <div class="band-dot"></div>
+        <span class="band-text">Serial: <span id="bandSerial">—</span></span>
+        <div class="band-dot"></div>
+        <span class="band-text">Notice: This document is a satirical novelty item — zero actual protection against AI, rogue toasters, or self-aware spreadsheets</span>
+        <div class="band-dot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const dom = {
+      nameInput:     document.getElementById('nameInput'),
+      fontSelect:    document.getElementById('fontSelect'),
+      displayName:   document.getElementById('displayName'),
+      dynamicDate:   document.getElementById('dynamicDate'),
+      dynamicPolicy: document.getElementById('dynamicPolicy'),
+      serialPreview: document.getElementById('serialPreview'),
+      bandSerial:    document.getElementById('bandSerial'),
+      downloadBtn:   document.getElementById('downloadBtn'),
+      printBtn:      document.getElementById('printBtn'),
+      certContainer: document.getElementById('certContainer'),
+    };
+
+    // Validate all nodes present — catches any future HTML/JS drift immediately
+    for (const [k, v] of Object.entries(dom)) {
+      if (!v) throw new Error(`Missing DOM node: ${k}`);
+    }
+
+    // Date
+    dom.dynamicDate.innerText = new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    }).toUpperCase();
+
+    // Serial number from Gumroad URL params, or generate test serial
+    const params    = new URLSearchParams(window.location.search);
+    const receiptId = params.get('receipt_id') || params.get('sale_id');
+    const serial    = receiptId
+      ? `RAI-PREM-${receiptId.substring(0, 8).toUpperCase()}`
+      : `RAI-PREM-${Math.random().toString(16).substring(2, 8).toUpperCase()}`;
+
+    dom.dynamicPolicy.innerText = serial;
+    dom.serialPreview.innerText  = serial;
+    dom.bandSerial.innerText     = serial;
+
+    // Live name update
+    dom.nameInput.addEventListener('input', e => {
+      dom.displayName.innerText = e.target.value.trim() || 'Your Name Here';
+    });
+
+    // Live font update — swaps CSS class, preserves base class
+    const fontClasses = ['f-serif','f-script','f-oldeng','f-sans','f-typewriter'];
+    dom.fontSelect.addEventListener('change', e => {
+      fontClasses.forEach(c => dom.displayName.classList.remove(c));
+      dom.displayName.classList.add(e.target.value);
+    });
+
+    // PDF download via html2canvas + jsPDF
+    dom.downloadBtn.addEventListener('click', async () => {
+      const btn  = dom.downloadBtn;
+      const orig = btn.innerText;
+      btn.innerText = 'Generating PDF...';
+      btn.disabled  = true;
+
+      try {
+        const cert = dom.certContainer;
+        const prevTransform = cert.style.transform;
+        cert.style.transform = 'none';
+        await new Promise(r => setTimeout(r, 100));
+
+        const canvas = await html2canvas(cert, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#140d04',  // match dark parchment
+          logging: false,
+        });
+
+        cert.style.transform = prevTransform;
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+        const pw  = pdf.internal.pageSize.getWidth();
+        const ph  = pdf.internal.pageSize.getHeight();
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.97), 'JPEG', 0, 0, pw, ph);
+
+        const safeName = dom.nameInput.value.trim().replace(/[^a-z0-9]/gi, '_') || 'Certificate';
+        pdf.save(`RogueAI_Official_${safeName}.pdf`);
+
+        btn.innerText = '✓ Downloaded!';
+        setTimeout(() => { btn.innerText = orig; btn.disabled = false; }, 3000);
+
+      } catch (err) {
+        console.error('[Download Error]', err);
+        btn.innerText = 'Failed — use Print button';
+        btn.disabled  = false;
+        setTimeout(() => { btn.innerText = orig; }, 3500);
+      }
+    });
+
+    // Print fallback
+    dom.printBtn.addEventListener('click', () => window.print());
+
+  } catch (fatal) {
+    console.error('[Fatal] Premium generator failed to initialize:', fatal);
+  }
+});
+</script>
+</body>
+</html>

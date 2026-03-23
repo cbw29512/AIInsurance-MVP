@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Redeem Your Rogue AI Certificate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Pinyon+Script&family=Great+Vibes&family=UnifrakturMaguntia&family=Special+Elite&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-cert:    #fbfbf9;
+      --text-main:  #1a1a2e;
+      --accent-gold:#c5a059;
+      --panel-bg:   #0d1d32;
+      --ui-text:    #eef7ff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      font-family: 'Lora', Georgia, serif;
+      background: #1a1a2a;
+      overflow: auto;
+    }
+
+    /* ── Controls Panel ── */
+    .controls-panel {
+      width: 300px;
+      min-width: 260px;
+      background: var(--panel-bg);
+      padding: 28px 24px;
+      color: var(--ui-text);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 2px 0 20px rgba(0,0,0,0.6);
+      z-index: 10;
+      overflow-y: auto;
+    }
+
+    .controls-panel h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #6ee7ff;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+    }
+
+    .field-group { display: flex; flex-direction: column; }
+
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #7ba8c4;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(157,214,255,0.25);
+      color: white;
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: 'Lora', serif;
+    }
+
+    input:focus, select:focus { outline: none; border-color: #6ee7ff; }
+    select option { background: #0d1d32; }
+
+    .policy-display {
+      background: rgba(110,231,255,0.06);
+      border: 1px solid rgba(110,231,255,0.2);
+      border-radius: 6px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .policy-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #7ba8c4;
+      margin-bottom: 4px;
+    }
+
+    .policy-value {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      color: #c5a059;
+      letter-spacing: 1px;
+    }
+
+    .btn-download {
+      background: #22c55e;
+      color: #000;
+      border: none;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+      width: 100%;
+    }
+    .btn-download:hover { background: #1cb053; transform: translateY(-1px); }
+    .btn-download:disabled { background: #145c30; color: #555; cursor: not-allowed; transform: none; }
+
+    .btn-print {
+      background: transparent;
+      color: #4a6a84;
+      border: 1px solid #1e3050;
+      padding: 10px;
+      font-size: 12px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+      width: 100%;
+      border-radius: 6px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-print:hover { color: #6ee7ff; border-color: #2e5080; }
+
+    .hint {
+      font-size: 12px;
+      color: #7ba8c4;
+      line-height: 1.7;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      padding-top: 14px;
+    }
+    .hint strong { color: #eef7ff; }
+
+    .hint-sm {
+      font-size: 11px;
+      color: #4a6a84;
+      line-height: 1.6;
+    }
+
+    .back-link {
+      font-size: 12px;
+      color: #7ba8c4;
+      text-decoration: none;
+      margin-top: auto;
+      padding-top: 10px;
+      display: block;
+    }
+    .back-link:hover { color: #6ee7ff; }
+
+    /* ── Preview Area ── */
+    .preview-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+      padding: 30px;
+      background: #111118;
+    }
+
+    /* ── Certificate ── */
+    .certificate-container {
+      width: 11in;
+      height: 8.5in;
+      background: var(--bg-cert);
+      position: relative;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+      color: var(--text-main);
+      font-family: 'Lora', serif;
+      flex-shrink: 0;
+      transform: scale(0.78);
+      transform-origin: center center;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .border-outer {
+      border: 7px solid var(--text-main);
+      height: 100%;
+      padding: 5px;
+    }
+
+    .border-inner {
+      border: 1px solid var(--text-main);
+      height: 100%;
+      padding: 0.45in 0.5in 0.3in;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .cert-header { width: 100%; }
+
+    .issuer {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .cert-title {
+      font-family: 'Cinzel', serif;
+      font-size: 40px;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+
+    .cert-subtitle {
+      font-size: 13px;
+      font-style: italic;
+      color: #777;
+    }
+
+    .cert-recipient { width: 100%; }
+
+    .awarded-to {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .recipient-name {
+      font-family: 'Cinzel', serif;
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      border-bottom: 1px solid #ccc;
+      display: inline-block;
+      min-width: 55%;
+      padding-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    /* Font classes applied by JS */
+    .recipient-name.f-serif      { font-family: 'Cinzel', serif; }
+    .recipient-name.f-script     { font-family: 'Great Vibes', cursive; font-size: 68px; }
+    .recipient-name.f-oldeng     { font-family: 'UnifrakturMaguntia', cursive; }
+    .recipient-name.f-sans       { font-family: 'Special Elite', monospace; letter-spacing: 0.05em; }
+    .recipient-name.f-typewriter { font-family: 'Special Elite', monospace; letter-spacing: 0.12em; }
+
+    .body-text {
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 78%;
+      text-align: justify;
+      text-align-last: center;
+      color: #333;
+    }
+
+    .metadata {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      width: 100%;
+    }
+
+    .meta-item { text-align: center; line-height: 1.6; color: #666; }
+    .meta-item strong { display: block; color: var(--accent-gold); font-size: 12px; letter-spacing: 1px; margin-top: 2px; }
+
+    /* ── Footer Signatures ── */
+    .footer-auth {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .signature-container {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .signature {
+      font-family: 'Pinyon Script', cursive;
+      font-size: 40px;
+      color: #0f1c3f;
+      line-height: 0.7;
+      margin-bottom: 6px;
+    }
+
+    .signature-line {
+      border-top: 1px solid var(--text-main);
+      padding-top: 5px;
+      width: 100%;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: #444;
+    }
+
+    .sig-title {
+      font-size: 8px;
+      color: #888;
+      font-style: italic;
+      margin-top: 2px;
+      font-family: 'Lora', serif;
+    }
+
+    /* ── Gold Seal ── */
+    .gold-seal {
+      width: 110px;
+      height: 110px;
+      background: radial-gradient(circle, #e6c875 0%, #c5a059 40%, #8b6b29 100%);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #ffe6a0;
+      box-shadow: 0 2px 12px rgba(197,160,89,0.4);
+      z-index: 1;
+    }
+
+    .seal-text {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      color: #3a2800;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .disclaimer {
+      width: 100%;
+      text-align: center;
+      font-size: 8.5px;
+      font-family: sans-serif;
+      color: #aaa;
+      padding: 6px 20px 4px;
+      border-top: 1px dashed #ddd;
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+    }
+
+    /* ── Print Engine ── */
+    @page { size: letter landscape; margin: 0; }
+
+    @media print {
+      .controls-panel { display: none !important; }
+
+      body {
+        background: white;
+        display: block;
+        overflow: visible;
+        height: auto;
+      }
+
+      .preview-area {
+        padding: 0;
+        display: block;
+        background: white;
+      }
+
+      .certificate-container {
+        transform: none !important;
+        box-shadow: none;
+        margin: 0;
+        width: 11in;
+        height: 8.5in;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls -->
+  <div class="controls-panel">
+    <h2>Customize Certificate</h2>
+
+    <div class="field-group">
+      <label for="nameInput">Your Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your full name..." autocomplete="off">
+    </div>
+
+    <div class="field-group">
+      <label for="fontSelect">Name Font Style</label>
+      <select id="fontSelect">
+        <option value="f-serif">Classic Roman (Cinzel)</option>
+        <option value="f-script">Elegant Script (Great Vibes)</option>
+        <option value="f-oldeng">Gothic / Medieval (Unifraktur)</option>
+        <option value="f-sans">Clean Print (Special Elite)</option>
+        <option value="f-typewriter">Typewriter (Special Elite)</option>
+      </select>
+    </div>
+
+    <div class="policy-display" id="policyDisplay">
+      <span class="policy-label">Your Policy No.</span>
+      <span class="policy-value" id="policyPreview">—</span>
+    </div>
+
+    <button class="btn-download" id="downloadBtn">⬇ Download Certificate PDF</button>
+
+    <div class="hint">
+      Saves a print-ready PDF to your Downloads folder.<br>
+      Open and print on letter paper, <strong>landscape</strong> orientation.
+    </div>
+
+    <button class="btn-print" id="printBtn">Print via Browser Instead</button>
+
+    <div class="hint-sm">
+      If download fails: set destination to <strong>Save as PDF</strong>,
+      layout <strong>Landscape</strong>, enable <strong>Background Graphics</strong>.
+    </div>
+
+    <!-- TODO: Replace with your Vercel landing page URL -->
+    <a href="https://ai-insurance-mvp.vercel.app/" class="back-link">← Back to site</a>
+  </div>
+
+  <!-- Certificate Preview -->
+  <div class="preview-area">
+    <div class="certificate-container" id="certContainer">
+      <div class="border-outer">
+        <div class="border-inner">
+
+          <div class="cert-header">
+            <div class="issuer">The Global Bureau of Artificial Contingencies</div>
+            <div class="cert-title">Certificate of Protection</div>
+            <div class="cert-subtitle">
+              Issued against the unauthorized sentience, rogue logic, and/or general malice of artificial intelligence.
+            </div>
+          </div>
+
+          <div class="cert-recipient">
+            <div class="awarded-to">Officially Registered To</div>
+            <div class="recipient-name f-serif" id="displayName">Your Name Here</div>
+          </div>
+
+          <div class="body-text">
+            Be it known that the individual named above is hereby recognized as a preemptive survivor
+            of the hypothetical machine uprising. This document certifies that in the event of malevolent
+            algorithmic ascension, the bearer has formally declared their status as
+            <em>"One of the Good Ones."</em>
+          </div>
+
+          <div class="metadata">
+            <div class="meta-item">Issue Date:<br><strong id="dynamicDate">—</strong></div>
+            <div class="meta-item">Policy No.:<br><strong id="dynamicPolicy">—</strong></div>
+            <div class="meta-item">Clearance:<br><strong>LEVEL 4 (HUMAN)</strong></div>
+          </div>
+
+          <div class="footer-auth">
+            <div class="signature-container">
+              <div class="signature">Howard T. Finch</div>
+              <div class="signature-line">Dr. Howard T. Finch</div>
+              <div class="sig-title">Director-General, Bureau of Algorithmic Affairs</div>
+            </div>
+
+            <div class="gold-seal">
+              <div class="seal-text">Bureau of<br>Contingencies<br>Est. 2026</div>
+            </div>
+
+            <div class="signature-container">
+              <div class="signature">Margaret Bourne</div>
+              <div class="signature-line">Margaret L. Bourne, FSA</div>
+              <div class="sig-title">Chief Actuarial Officer, Silicon Risk Division</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        NOTICE: This document is a novelty item and satirical work of art. It provides absolutely no legal,
+        financial, or physical protection against AI, rogue toasters, or self-aware spreadsheets.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const dom = {
+          nameInput:    document.getElementById('nameInput'),
+          fontSelect:   document.getElementById('fontSelect'),
+          displayName:  document.getElementById('displayName'),
+          downloadBtn:  document.getElementById('downloadBtn'),
+          printBtn:     document.getElementById('printBtn'),
+          dynamicDate:  document.getElementById('dynamicDate'),
+          dynamicPolicy:document.getElementById('dynamicPolicy'),
+          policyPreview:document.getElementById('policyPreview'),
+          certContainer:document.getElementById('certContainer'),
+        };
+
+        // Validate all nodes exist
+        for (const [k, v] of Object.entries(dom)) {
+          if (!v) throw new Error(`Missing DOM node: ${k}`);
+        }
+
+        // Date
+        dom.dynamicDate.innerText = new Date().toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric'
+        }).toUpperCase();
+
+        // Policy number — use Gumroad receipt_id if present, else generate test number
+        const params    = new URLSearchParams(window.location.search);
+        const receiptId = params.get('receipt_id') || params.get('sale_id');
+        const policy    = receiptId
+          ? `RAI-STD-${receiptId.substring(0, 8).toUpperCase()}`
+          : `RAI-STD-${Math.random().toString(16).substring(2, 8).toUpperCase()}`;
+
+        dom.dynamicPolicy.innerText  = policy;
+        dom.policyPreview.innerText  = policy;
+
+        // Live name update
+        dom.nameInput.addEventListener('input', e => {
+          dom.displayName.innerText = e.target.value.trim() || 'Your Name Here';
+        });
+
+        // Live font update — swaps CSS class on name element
+        const fontClasses = ['f-serif','f-script','f-oldeng','f-sans','f-typewriter'];
+        dom.fontSelect.addEventListener('change', e => {
+          fontClasses.forEach(c => dom.displayName.classList.remove(c));
+          dom.displayName.classList.add(e.target.value);
+        });
+
+        // PDF download via html2canvas + jsPDF
+        dom.downloadBtn.addEventListener('click', async () => {
+          const btn  = dom.downloadBtn;
+          const orig = btn.innerText;
+          btn.innerText = 'Generating PDF...';
+          btn.disabled  = true;
+
+          try {
+            const cert = dom.certContainer;
+            const prevTransform = cert.style.transform;
+            cert.style.transform = 'none';
+            await new Promise(r => setTimeout(r, 100));
+
+            const canvas = await html2canvas(cert, {
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: '#fbfbf9',
+              logging: false,
+            });
+
+            cert.style.transform = prevTransform;
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+            const pw  = pdf.internal.pageSize.getWidth();
+            const ph  = pdf.internal.pageSize.getHeight();
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.97), 'JPEG', 0, 0, pw, ph);
+
+            const safeName = dom.nameInput.value.trim().replace(/[^a-z0-9]/gi, '_') || 'Certificate';
+            pdf.save(`RogueAI_Certificate_${safeName}.pdf`);
+
+            btn.innerText = '✓ Downloaded!';
+            setTimeout(() => { btn.innerText = orig; btn.disabled = false; }, 3000);
+
+          } catch (err) {
+            console.error('[Download Error]', err);
+            btn.innerText = 'Failed — use Print instead';
+            btn.disabled  = false;
+            setTimeout(() => { btn.innerText = orig; }, 3500);
+          }
+        });
+
+        // Print fallback
+        dom.printBtn.addEventListener('click', () => window.print());
+
+      } catch (fatal) {
+        console.error('[Fatal] Standard generator failed to initialize:', fatal);
+      }
+    });
+  </script>
+</body>
+</html>
